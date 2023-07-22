@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import esfera from './esfera';
+import fontes from './fontes';
 
 // Set up the scene, camera, and renderer
 const scene = new THREE.Scene();
@@ -33,104 +35,14 @@ const vertexShaderCode = `
 const fragmentShaderCode = `
   varying vec3 vPosition; // Receive position data from the vertex shader
 
+  //Cálculo da luz
+  ${fontes}
+
+  //Cálculo de interseção da esfera
+  ${esfera}
+
   vec3 shootRaio(vec3 pos){
     return pos - vec3(0,0,1);
-  }
-
-  vec3 intersecaoRaio(float a, float b, float c, vec3 p0, vec3 dr){
-    
-    float delta = b*b - 4.0*a*c;
-    
-    // //Raiz imaginária
-    if (delta < 0.0) return vec3(0,0,3857);
-
-    delta = sqrt(delta);
-    
-    float t1 = (-b-delta)/(2.0*a);
-    
-    float t2 = (-b+delta)/(2.0*a);
-
-    // Pega a menor raiz positiva 
-    // float t = (t1 < t2)? 
-                            // (t1 > 0)? t1 : t2 :
-                            // (t2 > 0)? t2 : t1;
-
-    float t = t1;
-
-    if(t < t2){
-        if(t1 < 0.0){
-            t = t2;
-        }
-    }
-    else{
-        t = t2;
-        if(t2 < 0.0){
-            t = t1;
-        }
-    }
-    //Se não existir raiz positiva
-    if(t < 0.0) return vec3(0,0,3867);
-
-    return p0 + dr*t;
-  }
-
-  struct Fonte{
-    vec3 If;
-    vec3 posicao;
-  };
-
-  vec3 especular(vec3 n, vec3 l, vec3 v){
-
-    vec3 If = vec3(0.5,0,0.7);
-
-    vec3 r = normalize(n * (2.0 *  dot(l,n)) - l);
-
-    float fe = dot(v,r);
-
-    if(fe < 0.0) return vec3(0,0,0);
-
-    return If * fe;
-  }
-
-  vec3 luz(vec3 ponto, vec3 normal, vec3 dr){
-
-    vec3 If = vec3(0.5,0.6,0.7);
-
-    // vec3 Kd = vec3(0.5,0.6,0.7);
-
-    vec3 posicao = vec3(9,9,0.7);
-
-    vec3 n = normalize(normal);
-    
-    vec3 l = normalize(ponto - posicao);
-
-    if(dot(l,n) > 0.0) return vec3(0,0,0);
-
-    return If*(-dot(l,n)) + especular(n,l,dr);
-  }
-
-  struct Esfera{
-    vec3 centro;
-    float raio;
-  };
-
-  vec3 colisao(Esfera esfera, vec3 p0, vec3 dr){
-
-    float raio = esfera.raio;
-    vec3 centro = esfera.centro;
-
-    vec3 w = p0 - centro;
-    
-    float a = dot(dr,dr);
-    float b = dot(w,dr) * 2.0;
-    float c = dot(w,w) - raio*raio;
-
-    vec3 ponto  = intersecaoRaio(a,b,c,p0,dr);
-    vec3 normal = ponto - centro;
-
-    if(ponto.z == 3857.0) return vec3(0,0,0);
-
-    return luz(ponto, normal, dr);
   }
 
   void main() {
