@@ -74,6 +74,11 @@ const fragmentShaderCode = `
     return p0 + dr*t;
   }
 
+  struct Fonte{
+    vec3 If;
+    vec3 posicao;
+  };
+
   vec3 especular(vec3 n, vec3 l, vec3 v){
 
     vec3 If = vec3(0.5,0,0.7);
@@ -93,7 +98,7 @@ const fragmentShaderCode = `
 
     // vec3 Kd = vec3(0.5,0.6,0.7);
 
-    vec3 posicao = vec3(0,1,0);
+    vec3 posicao = vec3(9,9,0.7);
 
     vec3 n = normalize(normal);
     
@@ -104,10 +109,15 @@ const fragmentShaderCode = `
     return If*(-dot(l,n)) + especular(n,l,dr);
   }
 
-  vec3 colidiuCirculo(vec3 p0, vec3 dr){
+  struct Esfera{
+    vec3 centro;
+    float raio;
+  };
 
-    float raio = 1.0;
-    vec3 centro = vec3(0,0,-4);
+  vec3 colisao(Esfera esfera, vec3 p0, vec3 dr){
+
+    float raio = esfera.raio;
+    vec3 centro = esfera.centro;
 
     vec3 w = p0 - centro;
     
@@ -128,7 +138,13 @@ const fragmentShaderCode = `
 
     vec3 raio = shootRaio(vPosition);
 
-    vec3 cor = colidiuCirculo(vPosition, raio);
+    Esfera esfera = Esfera(vec3(0,0,-4), 1.5);
+
+    vec3 cor = colisao(esfera, vPosition, raio);
+
+    cor = cor + colisao(Esfera(vec3(-3,-3,-4), 1.5), vPosition, raio);
+
+    cor = cor + colisao(Esfera(vec3(-3,0,-4), 2.0), vPosition, raio);
     
     gl_FragColor = vec4(cor, 1.0);
   }
