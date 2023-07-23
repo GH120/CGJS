@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import esfera from './esfera';
+import triangulo from './triangulo';
 import fontes from './fontes';
 
 // Set up the scene, camera, and renderer
@@ -83,6 +84,9 @@ const fragmentShaderCode = `
   //Cálculo de interseção da esfera
   ${esfera}
 
+  //Colisão triângulos
+  ${triangulo}
+
   //Cálculo da luz
   ${fontes}
 
@@ -97,9 +101,13 @@ const fragmentShaderCode = `
 
     Esfera esfera = Esfera(vec3(0,0,-2), 1.5);
 
-    Ponto ponto = colisao(esfera, vPosition, raio);
+    Triangulo t = Triangulo(vec3(0,0,-2), vec3(2,0,-2), vec3(2,2,-2),vec3(0,0,0));
 
-    ponto = maisProximo(colisao(Esfera(vec3(0,-1,-3), 2.5), vPosition, raio), ponto);
+    Ponto ponto = colisao(t, vPosition, raio);
+
+    // ponto = maisProximo(colisao(Esfera(vec3(0,-1,-3), 2.5), vPosition, raio), ponto);
+
+    // ponto = maisProximo(ponto, colision(t,p0,dr));
 
     vec3 cor = luz(ponto,raio);
 

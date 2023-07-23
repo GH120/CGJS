@@ -10,7 +10,7 @@ function getShaderCode(objeto){
   
       const esfera = objeto.fronteira;
   
-      code = code.concat(`if(colisao(Esfera( ${vec3(esfera.centro)} , ${esfera.raio}), p0, dr).z != 3857.0){
+      code = code.concat(`if(!colisao(Esfera( ${vec3(esfera.centro)} , ${esfera.raio}), p0, dr).nulo){
       `);
     }
   
