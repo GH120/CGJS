@@ -105,9 +105,25 @@ const fragmentShaderCode = `
 
     Ponto ponto = colisao(t, vPosition, raio);
 
-    // ponto = maisProximo(colisao(Esfera(vec3(0,-1,-3), 2.5), vPosition, raio), ponto);
+    ponto = maisProximo(colisao(Esfera(vec3(0,-1,-3), 2.5), vPosition, raio), ponto);
 
     // ponto = maisProximo(ponto, colision(t,p0,dr));
+
+    if(!colisao(Esfera( vec3(20,20,-60) , 35.0), vPosition, raio).nulo){
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,40,-40), vec3(40,0,-40), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,0,-40), vec3(40,0,-80), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-80), vec3(0,40,-40), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-40), vec3(40,40,-40), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-40), vec3(40,0,-40), vec3(40,40,-40), vec3(40,40,-40)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-40), vec3(40,0,-40), vec3(0,40,-40), vec3(0,40,-40)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-80), vec3(0,0,-40), vec3(0,40,-40), vec3(0,40,-40)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-80), vec3(0,0,-40), vec3(0,40,-80), vec3(0,40,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-40), vec3(40,0,-80), vec3(40,0,-40), vec3(40,0,-40)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,0,-80), vec3(0,0,-40), vec3(0,0,-80), vec3(0,0,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,0,-80), vec3(0,40,-80), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
+      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-80), vec3(0,40,-80), vec3(40,0,-80), vec3(40,0,-80)),vPosition,raio));
+  
+      }
 
     vec3 cor = luz(ponto,raio);
 

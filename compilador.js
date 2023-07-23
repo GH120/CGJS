@@ -2,15 +2,15 @@ function getShaderCode(objeto){
 
     let code = "";
   
-    let vec3 = (vetor) => `vec3(${vetor[0]},${vetor[1]},${vetor[2]})`;
+    let vec3 = (vetor) => `vec3(${vetor[0]},${vetor[1]},${vetor[2] - 80})`;
 
-    let triangulo = (objeto) => `Triangulo(${vec3(objeto.p1)}, ${vec3(objeto.p2)}, ${vec3(objeto.p3)})`
+    let triangulo = (objeto) => `Triangulo(${vec3(objeto.p1)}, ${vec3(objeto.p2)}, ${vec3(objeto.p3)}, ${vec3(objeto.p3)})`
   
     if(objeto.fronteira){
   
       const esfera = objeto.fronteira;
   
-      code = code.concat(`if(!colisao(Esfera( ${vec3(esfera.centro)} , ${esfera.raio}), p0, dr).nulo){
+      code = code.concat(`if(!colisao(Esfera( ${vec3(esfera.centro)} , ${esfera.raio}.0), vPosition, raio).nulo){
       `);
     }
   
@@ -22,7 +22,7 @@ function getShaderCode(objeto){
   
     }
     else{
-      code = code.concat(`ponto = maisProximo(ponto, colisao(${triangulo(objeto)},p0,dr));
+      code = code.concat(`ponto = maisProximo(ponto, colisao(${triangulo(objeto)},vPosition,raio));
     `);
     }
   
