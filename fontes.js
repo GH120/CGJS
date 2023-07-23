@@ -18,7 +18,9 @@ export default fontes = `
     return If * fe;
   }
 
-  vec3 luz(vec3 ponto, vec3 normal, vec3 dr){
+  vec3 luz(Ponto ponto, vec3 dr){
+
+    if(ponto.nulo) return vec3(0,0,0);
 
     vec3 If = vec3(0.5,0.6,0.7);
 
@@ -26,9 +28,9 @@ export default fontes = `
 
     vec3 posicao = vec3(9,9,0.7);
 
-    vec3 n = normalize(normal);
+    vec3 n = normalize(ponto.normal);
     
-    vec3 l = normalize(ponto - posicao);
+    vec3 l = normalize(ponto.pos - posicao);
 
     if(dot(l,n) > 0.0) return vec3(0,0,0);
 

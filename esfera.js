@@ -4,12 +4,26 @@ export default esfera = `
     float raio;
   };
 
-  vec3 intersecaoRaio(float a, float b, float c, vec3 p0, vec3 dr){
+  struct Ponto{
+    vec3  pos;
+    vec3  normal;
+    float distancia;
+    bool  nulo;
+  };
+
+  Ponto maisProximo(Ponto a, Ponto b){
+    if(a.nulo) return b;
+    if(b.nulo) return a;
+    if(a.distancia < b.distancia) return a;
+    return b;
+  }
+
+  float intersecaoRaio(float a, float b, float c, vec3 p0, vec3 dr){
     
     float delta = b*b - 4.0*a*c;
     
     // //Raiz imaginária
-    if (delta < 0.0) return vec3(0,0,3857);
+    if (delta < 0.0) return -1.0;
 
     delta = sqrt(delta);
     
@@ -35,13 +49,11 @@ export default esfera = `
             t = t1;
         }
     }
-    //Se não existir raiz positiva
-    if(t < 0.0) return vec3(0,0,3867);
-
-    return p0 + dr*t;
+    
+    return t;
   }
 
-  vec3 colisao(Esfera esfera, vec3 p0, vec3 dr){
+  Ponto colisao(Esfera esfera, vec3 p0, vec3 dr){
 
     float raio = esfera.raio;
     vec3 centro = esfera.centro;
@@ -52,10 +64,13 @@ export default esfera = `
     float b = dot(w,dr) * 2.0;
     float c = dot(w,w) - raio*raio;
 
-    vec3 ponto  = intersecaoRaio(a,b,c,p0,dr);
-    vec3 normal = ponto - centro;
+    float distancia = intersecaoRaio(a,b,c,p0,dr);
 
-    if(ponto.z == 3857.0) return vec3(0,0,0);
+    if(distancia < 0.0) return Ponto(p0,dr,-1.0,true);
 
-    return luz(ponto, normal, dr);
-  }`;
+    vec3 posicao = p0 + dr * distancia;
+    vec3 normal  = posicao - centro;
+
+    return Ponto(posicao, normal, distancia, false);
+  }
+  `;
