@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import esfera from './esfera';
 import triangulo from './triangulo';
 import fontes from './fontes';
+import compilador from './compilador';
 
 // Set up the scene, camera, and renderer
 const scene = new THREE.Scene();
@@ -21,51 +22,6 @@ const vertices = new Float32Array([
     -1, -1,  // bottom left
   ]);
 fullscreenQuadGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 2));
-
-function getShaderCode(objeto){
-
-  let code = "";
-
-  let vec3 = (vetor) => `vec3(${vetor[0]},${vetor[1]},${vetor[2]})`;
-
-  let triangulo = (objeto) => `Triangulo(${vec3(objeto.p1)}, ${vec3(objeto.p2)}, ${vec3(objeto.p3)})`
-
-  if(objeto.fronteira){
-
-    const esfera = objeto.fronteira;
-
-    code = code.concat(`if(colisao(Esfera( ${vec3(esfera.centro)} , ${esfera.raio}), p0, dr).z != 3857.0){
-    `);
-  }
-
-  if(objeto.componentes){
-
-    for(const componente of objeto.componentes){
-      code = code.concat("  " + getShaderCode(componente));
-    }
-
-  }
-  else{
-    code = code.concat(`ponto = maisProximo(ponto, colisao(${triangulo(objeto)},p0,dr));
-  `);
-  }
-
-  if(objeto.fronteira)
-      code = code.concat(`
-      }
-  `);
-
-  return code;
-}
-
-console.log(getShaderCode({componentes:[
-                                        {componentes:[{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]},{componentes:[{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]},{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]},{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]}], fronteira:{centro:[0,1,2], raio:2}},{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]},{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]}], 
-                                         fronteira:{centro:[0,1,2], raio:2}}, 
-                                         {p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]},
-                                        {componentes:[{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]},{p1:[0,1,2],p2:[0,1,2],p3:[0,1,2]}],
-                                         fronteira:{centro:[0,1,1], raio:1}}
-                                      ]
-}))
 
 // Define the vertex shader as a string
 const vertexShaderCode = `
@@ -109,21 +65,7 @@ const fragmentShaderCode = `
 
     // ponto = maisProximo(ponto, colision(t,p0,dr));
 
-    if(!colisao(Esfera( vec3(20,20,-60) , 35.0), vPosition, raio).nulo){
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,40,-40), vec3(40,0,-40), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,0,-40), vec3(40,0,-80), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-80), vec3(0,40,-40), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-40), vec3(40,40,-40), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-40), vec3(40,0,-40), vec3(40,40,-40), vec3(40,40,-40)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-40), vec3(40,0,-40), vec3(0,40,-40), vec3(0,40,-40)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,40,-80), vec3(0,0,-40), vec3(0,40,-40), vec3(0,40,-40)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-80), vec3(0,0,-40), vec3(0,40,-80), vec3(0,40,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-40), vec3(40,0,-80), vec3(40,0,-40), vec3(40,0,-40)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,0,-80), vec3(0,0,-40), vec3(0,0,-80), vec3(0,0,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(40,0,-80), vec3(0,40,-80), vec3(40,40,-80), vec3(40,40,-80)),vPosition,raio));
-      ponto = maisProximo(ponto, colisao(Triangulo(vec3(0,0,-80), vec3(0,40,-80), vec3(40,0,-80), vec3(40,0,-80)),vPosition,raio));
-  
-      }
+    ${compilador}
 
     vec3 cor = luz(ponto,raio);
 

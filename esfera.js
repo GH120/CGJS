@@ -12,10 +12,17 @@ export default esfera = `
   };
 
   Ponto maisProximo(Ponto a, Ponto b){
-    if(a.nulo) return b;
-    if(b.nulo) return a;
-    if(a.distancia < b.distancia) return a;
+    if(b.nulo || (!a.nulo && a.distancia < b.distancia)) return a;
     return b;
+  }
+
+  bool acertou(vec3 w, vec3 dr, float raio){
+
+    float a = dot(dr,dr);
+    float b = dot(w,dr) * 4.0;
+    float c = dot(w,w) - raio*raio;
+
+    return b*b > a*c;
   }
 
   float intersecaoRaio(float a, float b, float c, vec3 p0, vec3 dr){
