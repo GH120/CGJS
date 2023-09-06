@@ -20,7 +20,7 @@ export default fontes = `
 
   vec3 luz(Ponto ponto, vec3 dr){
 
-    if(ponto.nulo) return vec3(0,0,0);
+    if(ponto.distancia < 0.0) return vec3(0,0,0);
 
     vec3 If = vec3(0.5,0.6,0.7);
 

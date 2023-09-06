@@ -8,11 +8,12 @@ export default esfera = `
     vec3  pos;
     vec3  normal;
     float distancia;
-    bool  nulo;
   };
 
   Ponto maisProximo(Ponto a, Ponto b){
-    if(b.nulo || (!a.nulo && a.distancia < b.distancia)) return a;
+    if(a.distancia > 0.0 && (b.distancia < 0.0 || b.distancia > a.distancia)){
+      return a;
+    }
     return b;
   }
 
@@ -24,6 +25,7 @@ export default esfera = `
 
     return b*b > a*c;
   }
+
 
   float intersecaoRaio(float a, float b, float c, vec3 p0, vec3 dr){
     
@@ -43,21 +45,9 @@ export default esfera = `
                             // (t1 > 0)? t1 : t2 :
                             // (t2 > 0)? t2 : t1;
 
-    float t = t1;
-
-    if(t < t2){
-        if(t1 < 0.0){
-            t = t2;
-        }
-    }
-    else{
-        t = t2;
-        if(t2 < 0.0){
-            t = t1;
-        }
-    }
+    t1 = (float(bool(max(0.0, t1)))*1024.0 - 1023.0) * t1;
     
-    return t;
+    return min(t1,t2);
   }
 
   Ponto colisao(Esfera esfera, vec3 p0, vec3 dr){
@@ -73,11 +63,9 @@ export default esfera = `
 
     float distancia = intersecaoRaio(a,b,c,p0,dr);
 
-    if(distancia < 0.0) return Ponto(p0,dr,-1.0,true);
-
     vec3 posicao = p0 + dr * distancia;
     vec3 normal  = posicao - centro;
 
-    return Ponto(posicao, normal, distancia, false);
+    return Ponto(posicao, normal, distancia);
   }
   `;

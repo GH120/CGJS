@@ -6,13 +6,13 @@ function getShaderCode(objeto){
 
     let triangulo = (objeto) => `Triangulo(${vec3(objeto.p1)}, ${vec3(objeto.p2)}, ${vec3(objeto.p3)}, ${vec3(objeto.p3)})`
   
-    if(objeto.fronteira){
+    // if(objeto.fronteira){
   
-      const esfera = objeto.fronteira;
+    //   const esfera = objeto.fronteira;
   
-      code = code.concat(`if(acertou(vPosition - ${vec3(esfera.centro)}, raio, ${esfera.raio})){
-      `);
-    }
+    //   code = code.concat(`if(acertou(vPosition - ${vec3(esfera.centro)}, raio, ${esfera.raio})){
+    //   `);
+    // }
   
     if(objeto.componentes){
   
@@ -26,10 +26,10 @@ function getShaderCode(objeto){
     `);
     }
   
-    if(objeto.fronteira)
-        code = code.concat(`
-        }
-    `);
+    // if(objeto.fronteira)
+    //     code = code.concat(`
+    //     }
+    // `);
   
     return code;
   }

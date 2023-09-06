@@ -104,5 +104,6 @@ function render() {
   requestAnimationFrame(render);
   renderer.render(scene, camera);
 }
-
+console.time();
 render();
+console.timeEnd()

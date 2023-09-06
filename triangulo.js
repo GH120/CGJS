@@ -42,18 +42,13 @@ export default triangulo = `
 
         float denominador = dot(n,dr);
 
-        if (denominador != 0.0){
+        float tint = dot(P1 - p0, n) / denominador;
 
-            float tint = dot(P1 - p0, n) / denominador;
+        vec3 pi = p0 + dr * tint;
 
-            if (tint > 0.0){
+        tint = (float(pertence(triangulo, pi))*2.0 - 1.0) * (float(bool(max(0.0, tint)))*1024.0 - 1023.0) * tint;
 
-                vec3 pi = p0 + dr * tint;
-
-                if(pertence(triangulo,pi))return Ponto(pi, n, tint, false);
-            }
-        }
+        return Ponto(pi, n, tint);
         
-        return Ponto(p0, p0, -1.0, true);
     }
 `;
